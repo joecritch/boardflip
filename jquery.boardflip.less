@@ -1,0 +1,118 @@
+@width: 400px;
+@height: 600px;
+
+.board * {
+  -webkit-user-drag: none;
+  -webkit-user-select: none;
+}
+
+.board {
+  -webkit-transform: translate3d(0,0,0);
+  -webkit-transform-style: preserve-3d; 
+  width: @width;
+  height: @height;
+  margin: 50px auto;
+  -webkit-perspective: 3000px;
+  section {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: @width;
+    height: @height;
+    overflow: hidden;
+    &.current {
+      z-index: 97 !important;
+    }
+    // ----
+    /*
+    .before {
+      position: absolute;
+      top: 0; right: 0; bottom: 0; left: 0; 
+      background: rgba(0,0,0,0);
+      pointer-events: none;
+    } */
+  }
+}
+@media screen and (max-width: 320px) {
+  .board {
+    margin: 0 auto;
+  }
+}
+
+// ----
+.clone {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 100;
+  -webkit-transform-origin: 0 (@height / 2);
+  -webkit-transform-style: preserve-3d;
+  left: 0;
+  right: 0;
+  -webkit-backface-visibility: hidden;
+  top: 0;
+  bottom: @height / 2;
+  html.chrome & {
+    overflow: hidden;
+  }
+  &.bottom {
+    -webkit-transform-origin: 0px 0px;
+    -webkit-transform: rotateX(0.1deg);
+    top: @height / 2;
+    bottom: 0;
+  }
+  > .inner {
+    position: relative;
+    height: @height / 2;
+  }
+  &.bottom > .inner {
+    top: 0 - (@height / 2);
+  }
+}
+
+.clone > .inner .flipside {
+  -webkit-transform: rotateY(0) rotateX(180deg);
+  -webkit-transform-origin: 0 0;
+  top: @height;
+  z-index: 101;
+  -webkit-transform-style: preserve-3d;
+  height: @height / 2;
+  opacity: 0;
+  width: @width;
+  height: @height / 2;
+  .board.over & {
+    opacity: 1;
+  }
+}
+.clone:not(.bottom) > .inner .flipside {
+  top: @height / 2;
+  > .inner {
+    top: 0 - (@height / 2);
+    position: relative;
+  }
+}
+
+.board section.next {
+  height: @height / 2;
+  z-index: 98 !important;
+  /* .before {
+    background: rgba(0,0,0,0.5);
+    z-index: 98;
+  } */
+}
+/*
+.board.over section.next .before {
+  background: rgba(0,0,0,0);
+}
+*/
+
+// When the next is *after* the current section...
+.board section.current~section.next { 
+  height: @height / 2;
+  top: @height / 2;
+  > .inner {
+    top: 0 - (@height / 2);
+    position: relative;
+  }
+}

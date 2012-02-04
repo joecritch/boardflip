@@ -1,0 +1,109 @@
+.board * {
+  -webkit-user-drag: none;
+  -webkit-user-select: none;
+}
+.board {
+  -webkit-transform: translate3d(0, 0, 0);
+  -webkit-transform-style: preserve-3d;
+  width: 400px;
+  height: 600px;
+  margin: 50px auto;
+  -webkit-perspective: 3000px;
+}
+.board section {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 400px;
+  height: 600px;
+  overflow: hidden;
+  /*
+    .before {
+      position: absolute;
+      top: 0; right: 0; bottom: 0; left: 0; 
+      background: rgba(0,0,0,0);
+      pointer-events: none;
+    } */
+
+}
+.board section.current {
+  z-index: 97 !important;
+}
+@media screen and (max-width: 320px) {
+  .board {
+    margin: 0 auto;
+  }
+}
+.clone {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 100;
+  -webkit-transform-origin: 0 300px;
+  -webkit-transform-style: preserve-3d;
+  left: 0;
+  right: 0;
+  -webkit-backface-visibility: hidden;
+  top: 0;
+  bottom: 300px;
+}
+html.chrome .clone {
+  overflow: hidden;
+}
+.clone.bottom {
+  -webkit-transform-origin: 0px 0px;
+  -webkit-transform: rotatex(0.1deg);
+  top: 300px;
+  bottom: 0;
+}
+.clone > .inner {
+  position: relative;
+  height: 300px;
+}
+.clone.bottom > .inner {
+  top: -300px;
+}
+.clone > .inner .flipside {
+  -webkit-transform: rotatey(0) rotatex(180deg);
+  -webkit-transform-origin: 0 0;
+  top: 600px;
+  z-index: 101;
+  -webkit-transform-style: preserve-3d;
+  height: 300px;
+  opacity: 0;
+  width: 400px;
+  height: 300px;
+}
+.board.over .clone > .inner .flipside {
+  opacity: 1;
+}
+.clone:not(.bottom) > .inner .flipside {
+  top: 300px;
+}
+.clone:not(.bottom) > .inner .flipside > .inner {
+  top: -300px;
+  position: relative;
+}
+.board section.next {
+  height: 300px;
+  z-index: 98 !important;
+  /* .before {
+    background: rgba(0,0,0,0.5);
+    z-index: 98;
+  } */
+
+}
+/*
+.board.over section.next .before {
+  background: rgba(0,0,0,0);
+}
+*/
+.board section.current ~ section.next {
+  height: 300px;
+  top: 300px;
+}
+.board section.current ~ section.next > .inner {
+  top: -300px;
+  position: relative;
+}
