@@ -22,17 +22,21 @@
     
     // Feature detection... and browser sniffing :-(
     var htmlClasses = [ ];
-    if(hasTouch) htmlClasses.push('touch');
+    if(hasTouch) {
+      htmlClasses.push('touch');
+    }
     var isChrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
-    if(isChrome) htmlClasses.push('chrome');
+    if(isChrome) {
+      htmlClasses.push('chrome');
+    }
     $('html').addClass(htmlClasses.join(' '));
     
     // Re-order the sections
     var $sections = this.$element.find('> section');
     this.__reorderSections($sections);
     this.$sections = $sections;
-        
-    // Event listeners    
+    
+    // Event listeners
     window.addEventListener(resizeEvent, this, false);
     this.$element[0].addEventListener(startEvent, this, false);
     this.$element[0].addEventListener(moveEvent, this, false);
@@ -43,7 +47,8 @@
     this.$currentSection.addClass('current');
     
     // Pseudo-pseudo elements
-    this.$sections.prepend('<span class="before" />');
+    $('<span />', {"class": "before"})
+    .prependTo(this.$sections);
     
     // Set-up other config.
     this.height = this.$element.height();
@@ -77,14 +82,15 @@
       this.$element.toggleClass('over', (this.deg > this.snapThreshold));
       
       // Animate shadows
-      // if(end === undefined || !end) {
-      //         if(this.deg > this.snapThreshold) {
-      //           this.$currentSection.children('.before').css('backgroundColor', 'rgba(0,0,0,' +  ((this.deg/this.snapThreshold)-1.2) + ')');
-      //         }
-      //         else {
-      //           this.$nextSection.children('.before').css('backgroundColor', 'rgba(0,0,0,' + (((this.snapThreshold-this.deg)/this.snapThreshold)-0.2) + ')');
-      //         }
-      //       }
+      if(end === undefined || !end) {
+        // console.log(this.$currentSection.data('shadow'));
+        if(this.deg > this.snapThreshold) {
+          this.$currentSection.data('shadow').css('backgroundColor', 'rgba(0,0,0,' +  ((this.deg/this.snapThreshold)-1) + ')');
+        }
+        else {
+          this.$nextSection.data('shadow').css('backgroundColor', 'rgba(0,0,0,' + (((this.snapThreshold-this.deg)/this.snapThreshold)) + ')');
+        }
+      }
       
       // Apply the rotation to the cloned elements.
       if(this.$clone !== null) {
@@ -92,7 +98,9 @@
       }
     },
     __start: function(e) {
-      if(this.iniated) return;
+      if(this.initiated) {
+        return false;
+      }
       var evt = hasTouch ? e.touches[0] : e;
       this.initiated = true;
       this.thresholdExceeded = false;
@@ -105,9 +113,13 @@
       this.direction = null;
     },
     __end: function(e) {
-      if(!this.initiated) return;
+      if(!this.initiated) {
+        return;
+      }
       this.initiated = false;
-      if(e === undefined) return;
+      if(e === undefined) {
+        return false;
+      }
       var evt = hasTouch ? e.changedTouches[0] : e,
           dist = Math.abs(evt.pageX - this.startPos);
       if(this.$clone !== null) {
@@ -115,14 +127,18 @@
       }
       
       // Animate shadows
-      // this.__setShadowTransition(this.$currentSection, '300ms');
-      // this.__setShadowTransition(this.$nextSection, '300ms');
+      this.__setShadowTransition(this.$currentSection, '300ms');
+      this.__setShadowTransition(this.$nextSection, '300ms');
       
-      // if(this.$currentSection.data('shadow')) this.$currentSection.data('shadow').css('backgroundColor', 'rgba(0,0,0,0)');
-      // if(this.$nextSection.data('shadow')) this.$nextSection.data('shadow').css('backgroundColor', 'rgba(0,0,0,0)');
+      if(this.$currentSection.data('shadow')) {
+        this.$currentSection.data('shadow').css('backgroundColor', 'rgba(0,0,0,0)');
+      }
+      if(this.$nextSection.data('shadow')) {
+        this.$nextSection.data('shadow').css('backgroundColor', 'rgba(0,0,0,0)');
+      }
        
-      if(this.thresholdExceeded) {        
-        this.$currentSection = this.$nextSection;  
+      if(this.thresholdExceeded) {
+        this.$currentSection = this.$nextSection;
         this.__rotate(this.totalDeg, true);
       }
       else {
@@ -130,15 +146,16 @@
       }
     },
     __move: function(e) {
-      if (!this.initiated) return;
-      
+      if (!this.initiated) {
+        return false;
+      }
       // Position calculation
       var evt = hasTouch ? e.touches[0] : e;
       this.point = evt.pageY - this.offset;
       var delta = evt.pageY - this.point,
       newPos = this.deg + delta,
-      dist = Math.abs(evt.pageY - this.startPos);       
-      this.steps += Math.abs(delta); 
+      dist = Math.abs(evt.pageY - this.startPos);
+      this.steps += Math.abs(delta);
       this.dist = evt.pageY - this.startPos;
                               
       // Buffer for touch drag
@@ -167,7 +184,7 @@
         // Add the clone
         this.__addClone();
         
-        // Cache the shadows 
+        // Cache the shadows
         this.$currentSection.data('shadow', this.$currentSection.children('.before'));
         this.__setShadowTransition(this.$currentSection, '0ms');
         this.$nextSection.data('shadow', this.$nextSection.children('.before'));
@@ -194,8 +211,8 @@
     __addClone: function() {
       this.$clone = $('<div class="clone"><div class="inner"></div></div>');
       this.$clone.find('.inner').html(this.$currentSection.children('.inner').html());
-      this.$flipside = $('<div class="clone flipside"></div>');  
-      this.$currentSection.after(this.$clone);    
+      this.$flipside = $('<div class="clone flipside"></div>');
+      this.$currentSection.after(this.$clone);
       this.$flipside.html(this.$nextSection.html());
       if(this.dist < 0) {
         this.$clone.addClass('bottom');
@@ -248,7 +265,9 @@
       var $this = $(this),
           data = $this.data('boardFlip'),
           options = typeof option === 'object' && option;
-      if(!data) $this.data('boardFlip', (data = new BoardFlip(this, options)));
+      if(!data) {
+        $this.data('boardFlip', (data = new BoardFlip(this, options)));
+      }
     });
   };
   

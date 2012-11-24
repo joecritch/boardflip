@@ -24,13 +24,12 @@
       z-index: 97 !important;
     }
     // ----
-    /*
     .before {
       position: absolute;
       top: 0; right: 0; bottom: 0; left: 0; 
       background: rgba(0,0,0,0);
       pointer-events: none;
-    } */
+    }
   }
 }
 @media screen and (max-width: 320px) {
@@ -96,16 +95,16 @@
 .board section.next {
   height: @height / 2;
   z-index: 98 !important;
-  /* .before {
+  .before {
     background: rgba(0,0,0,0.5);
     z-index: 98;
-  } */
+  }
 }
-/*
+
 .board.over section.next .before {
   background: rgba(0,0,0,0);
 }
-*/
+
 
 // When the next is *after* the current section...
 .board section.current~section.next { 
